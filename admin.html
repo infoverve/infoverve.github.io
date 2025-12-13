@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - InfoVerve</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-blog"></i>
+                <span>InfoVerve</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="admin.html" class="nav-link active">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Content -->
+    <main class="admin-container">
+        <div class="container">
+            <div class="admin-header">
+                <h1><i class="fas fa-cog"></i> Blog Management</h1>
+                <p>Create and manage your blog posts</p>
+            </div>
+
+            <!-- Post Editor -->
+            <section class="admin-section">
+                <h2><i class="fas fa-edit"></i> Create/Edit Post</h2>
+                
+                <form id="postForm">
+                    <input type="hidden" id="postId">
+                    
+                    <div class="form-group">
+                        <label for="postTitle">Title *</label>
+                        <input type="text" id="postTitle" required placeholder="Enter post title">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postAuthor">Author *</label>
+                            <input type="text" id="postAuthor" required placeholder="Author name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="postCategory">Category *</label>
+                            <select id="postCategory" required>
+                                <option value="">Select category</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Design">Design</option>
+                                <option value="Business">Business</option>
+                                <option value="Science">Science</option>
+                                <option value="Lifestyle">Lifestyle</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="postDate">Date *</label>
+                            <input type="date" id="postDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postExcerpt">Excerpt *</label>
+                        <textarea id="postExcerpt" rows="3" required placeholder="Brief description of the post"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postImage">Image URL</label>
+                        <input type="url" id="postImage" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postTags">Tags (comma-separated)</label>
+                        <input type="text" id="postTags" placeholder="javascript, web development, tutorial">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postReadTime">Read Time (minutes)</label>
+                            <input type="number" id="postReadTime" min="1" value="5">
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="postFeatured">
+                            <label for="postFeatured">
+                                <i class="fas fa-star"></i> Featured Post
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postContent">Content (Markdown) *</label>
+                        <textarea id="postContent" rows="15" required placeholder="Write your post content in Markdown...
+
+Example:
+# Heading 1
+## Heading 2
+
+**Bold text**
+*Italic text*
+
+- List item 1
+- List item 2
+
+[Link text](https://example.com)
+
+```javascript
+code block
+```
+"></textarea>
+                    </div>
+
+                    <div class="admin-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Post
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                            <i class="fas fa-redo"></i> Clear Form
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="previewPost()">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Posts List -->
+            <section class="posts-list">
+                <h2><i class="fas fa-list"></i> All Posts</h2>
+                <div id="postsList">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Instructions -->
+            <section class="admin-section" style="margin-top: 3rem;">
+                <h2><i class="fas fa-info-circle"></i> Instructions</h2>
+                <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 12px;">
+                    <h3>How to Use the Admin Panel:</h3>
+                    <ol style="line-height: 2;">
+                        <li><strong>Create a Post:</strong> Fill in all required fields marked with *</li>
+                        <li><strong>Markdown Support:</strong> Write your content using Markdown syntax</li>
+                        <li><strong>Save Posts:</strong> Click "Save Post" to download the updated data file</li>
+                        <li><strong>Upload Data:</strong> After saving, copy the downloaded JSON to <code>data/posts.json</code></li>
+                        <li><strong>Edit Posts:</strong> Click "Edit" on any post to load it into the form</li>
+                        <li><strong>Featured Posts:</strong> Check the "Featured Post" box to highlight on homepage</li>
+                        <li><strong>Images:</strong> Use direct image URLs (from GitHub, Imgur, etc.)</li>
+                    </ol>
+                    
+                    <h3 style="margin-top: 2rem;">Data Storage:</h3>
+                    <p>Posts are stored in <code>data/posts.json</code>. Since GitHub Pages is static, you need to manually update this file after creating/editing posts.</p>
+                    
+                    <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
+                        <strong>Quick Workflow:</strong><br>
+                        1. Create/edit post → 2. Click "Save Post" → 3. Copy JSON content → 4. Paste into <code>data/posts.json</code> → 5. Commit to GitHub
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 InfoVerve Admin Panel</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

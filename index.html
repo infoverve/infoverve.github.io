@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="InfoVerve - A modern professional blog">
+    <title>InfoVerve - Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-blog"></i>
+                <span>InfoVerve</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="admin.html" class="nav-link admin-link">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="hero">
+        <div class="container">
+            <h1 class="hero-title">Welcome to InfoVerve</h1>
+            <p class="hero-subtitle">Discover insights, ideas, and inspiration</p>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search articles...">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All Posts</button>
+                <button class="filter-tab" data-filter="featured">Featured</button>
+                <button class="filter-tab" data-filter="technology">Technology</button>
+                <button class="filter-tab" data-filter="design">Design</button>
+                <button class="filter-tab" data-filter="business">Business</button>
+            </div>
+
+            <!-- Featured Posts Section -->
+            <section class="featured-section" id="featuredSection">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i> Featured Posts
+                </h2>
+                <div class="featured-grid" id="featuredGrid">
+                    <!-- Featured posts will be loaded here -->
+                </div>
+            </section>
+
+            <!-- All Posts Section -->
+            <section class="posts-section">
+                <h2 class="section-title">Latest Articles</h2>
+                <div class="posts-grid" id="postsGrid">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading posts...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>No posts found</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>InfoVerve</h3>
+                    <p>A modern blogging platform built with passion.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                    <a href="admin.html">Admin</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 InfoVerve. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

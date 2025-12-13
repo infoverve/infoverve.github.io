@@ -1,0 +1,44 @@
+{
+  "posts": [
+    {
+      "id": "post-1734139200000-welcome",
+      "title": "Welcome to InfoVerve",
+      "author": "Admin",
+      "category": "Technology",
+      "date": "2025-12-13",
+      "excerpt": "Welcome to InfoVerve, a modern professional blogging platform built with cutting-edge web technologies. Discover how to create, manage, and share your ideas with the world.",
+      "image": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop",
+      "tags": ["welcome", "blogging", "introduction"],
+      "readTime": 3,
+      "featured": true,
+      "content": "# Welcome to InfoVerve\n\nWelcome to **InfoVerve**, your new home for professional blogging! This platform is designed to make content creation and management simple, elegant, and powerful.\n\n## Features\n\n### Modern Design\nInfoVerve features a clean, modern design that adapts beautifully to any device. Whether your readers are on desktop, tablet, or mobile, they'll enjoy a seamless reading experience.\n\n### Dark Mode Support\nSwitch between light and dark themes with a single click. The theme preference is saved automatically, ensuring a consistent experience across visits.\n\n### Powerful Search & Filtering\nFind content quickly with our intuitive search functionality and category filters. Readers can easily discover the content they're looking for.\n\n### Interactive Features\n- **Star Ratings**: Readers can rate articles with a 5-star system\n- **View Counter**: Track how many people have read each post\n- **Social Sharing**: Share posts on Twitter, LinkedIn, and Facebook\n- **Comments**: Engage with readers through GitHub Issues-powered comments\n\n### Easy Content Management\nThe admin panel makes creating and managing posts a breeze. Write in Markdown, preview your posts, and manage everything from one place.\n\n## Getting Started\n\nTo start blogging:\n\n1. Visit the [Admin Panel](admin.html)\n2. Create your first post\n3. Download the generated JSON file\n4. Update `data/posts.json` in your repository\n5. Commit and push to GitHub Pages\n\n## Markdown Support\n\nWrite naturally with Markdown syntax:\n\n```javascript\n// Code blocks are beautifully formatted\nconst greeting = 'Hello, World!';\nconsole.log(greeting);\n```\n\n> Blockquotes stand out and draw attention to important information.\n\n**Bold text** and *italic text* help emphasize key points.\n\n## What's Next?\n\nStart creating amazing content and building your audience. InfoVerve gives you all the tools you need to succeed.\n\nHappy blogging! 🚀"
+    },
+    {
+      "id": "post-1734139200001-markdown-guide",
+      "title": "Markdown Guide for Bloggers",
+      "author": "Admin",
+      "category": "Design",
+      "date": "2025-12-13",
+      "excerpt": "Master Markdown syntax to write beautiful, well-formatted blog posts. This comprehensive guide covers everything you need to know.",
+      "image": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&h=400&fit=crop",
+      "tags": ["markdown", "writing", "tutorial"],
+      "readTime": 7,
+      "featured": true,
+      "content": "# Markdown Guide for Bloggers\n\nMarkdown is a lightweight markup language that makes writing for the web easy and intuitive. This guide will teach you everything you need to create beautiful blog posts.\n\n## Basic Formatting\n\n### Headings\n\n```markdown\n# Heading 1\n## Heading 2\n### Heading 3\n```\n\n### Text Styling\n\n- **Bold text**: `**bold**` or `__bold__`\n- *Italic text*: `*italic*` or `_italic_`\n- ***Bold and italic***: `***text***`\n- ~~Strikethrough~~: `~~text~~`\n\n## Lists\n\n### Unordered Lists\n\n```markdown\n- Item 1\n- Item 2\n  - Nested item\n  - Another nested item\n- Item 3\n```\n\n### Ordered Lists\n\n```markdown\n1. First item\n2. Second item\n3. Third item\n```\n\n## Links and Images\n\n### Links\n\n```markdown\n[Link text](https://example.com)\n```\n\n### Images\n\n```markdown\n![Alt text](image-url.jpg)\n```\n\n## Code\n\n### Inline Code\n\nUse backticks for `inline code`.\n\n### Code Blocks\n\n```javascript\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n```\n\n## Blockquotes\n\n> This is a blockquote.\n> It can span multiple lines.\n\n## Tables\n\n| Feature | Description | Status |\n|---------|-------------|--------|\n| Search | Find posts | ✓ |\n| Comments | GitHub Issues | ✓ |\n| Ratings | 5-star system | ✓ |\n\n## Tips for Great Blog Posts\n\n1. **Start with a strong headline** - Make readers want to click\n2. **Use headings to organize** - Break up long content\n3. **Add images** - Visual content increases engagement\n4. **Keep paragraphs short** - Easier to read on screens\n5. **End with a call to action** - Encourage engagement\n\n## Conclusion\n\nMarkdown makes writing content simple and enjoyable. With these basics, you're ready to create professional blog posts that look great and are easy to read.\n\nHappy writing!"
+    },
+    {
+      "id": "post-1734139200002-github-pages",
+      "title": "Hosting Your Blog on GitHub Pages",
+      "author": "Admin",
+      "category": "Technology",
+      "date": "2025-12-13",
+      "excerpt": "Learn how to deploy and host your InfoVerve blog for free using GitHub Pages. A step-by-step guide for beginners.",
+      "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&h=400&fit=crop",
+      "tags": ["github", "deployment", "hosting"],
+      "readTime": 5,
+      "featured": false,
+      "content": "# Hosting Your Blog on GitHub Pages\n\nGitHub Pages offers free, reliable hosting for static websites. Here's how to deploy your InfoVerve blog.\n\n## Prerequisites\n\n- A GitHub account\n- Your InfoVerve blog files\n- Basic Git knowledge\n\n## Step 1: Create a Repository\n\n1. Go to [GitHub](https://github.com)\n2. Click \"New repository\"\n3. Name it `username.github.io` (replace username with your GitHub username)\n4. Make it public\n5. Don't initialize with README\n\n## Step 2: Push Your Code\n\n```bash\ngit init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main\ngit remote add origin https://github.com/username/username.github.io.git\ngit push -u origin main\n```\n\n## Step 3: Enable GitHub Pages\n\n1. Go to your repository settings\n2. Navigate to \"Pages\" section\n3. Select \"main\" branch as source\n4. Click \"Save\"\n\n## Step 4: Configure Your Blog\n\nUpdate the Utterances configuration in `post.html`:\n\n```html\n<script src=\"https://utteranc.es/client.js\"\n        repo=\"username/username.github.io\"\n        issue-term=\"pathname\"\n        theme=\"preferred-color-scheme\"\n        crossorigin=\"anonymous\"\n        async>\n</script>\n```\n\n## Step 5: Create Posts\n\n1. Visit `https://username.github.io/admin.html`\n2. Create your first post\n3. Download the generated `posts.json`\n4. Replace `data/posts.json` in your repository\n5. Commit and push\n\n## Updating Your Blog\n\nEvery time you create or edit a post:\n\n```bash\ngit add data/posts.json\ngit commit -m \"Update blog posts\"\ngit push\n```\n\nYour changes will be live in a few minutes!\n\n## Custom Domain (Optional)\n\n1. Buy a domain from any registrar\n2. Add a `CNAME` file to your repository with your domain\n3. Configure DNS records:\n   - A record: 185.199.108.153\n   - A record: 185.199.109.153\n   - A record: 185.199.110.153\n   - A record: 185.199.111.153\n\n## Conclusion\n\nCongratulations! Your blog is now live and accessible to the world. Start creating amazing content and building your audience.\n\n**Your blog URL**: `https://username.github.io`"
+    }
+  ],
+  "lastUpdated": "2025-12-13T00:00:00.000Z"
+}
