@@ -151,23 +151,44 @@ code block
             <section class="admin-section" style="margin-top: 3rem;">
                 <h2><i class="fas fa-info-circle"></i> Instructions</h2>
                 <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 12px;">
-                    <h3>How to Use the Admin Panel:</h3>
+                    <h3>🚀 How to Use the Admin Panel:</h3>
                     <ol style="line-height: 2;">
+                        <li><strong>First Time Setup:</strong>
+                            <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                                <li>Create a GitHub <strong>classic</strong> Personal Access Token</li>
+                                <li>Required scopes: <code>repo</code> + <code>workflow</code></li>
+                                <li>Enter token when prompted</li>
+                            </ul>
+                        </li>
                         <li><strong>Create a Post:</strong> Fill in all required fields marked with *</li>
                         <li><strong>Markdown Support:</strong> Write your content using Markdown syntax</li>
-                        <li><strong>Save Posts:</strong> Click "Save Post" to download the updated data file</li>
-                        <li><strong>Upload Data:</strong> After saving, copy the downloaded JSON to <code>data/posts.json</code></li>
-                        <li><strong>Edit Posts:</strong> Click "Edit" on any post to load it into the form</li>
-                        <li><strong>Featured Posts:</strong> Check the "Featured Post" box to highlight on homepage</li>
-                        <li><strong>Images:</strong> Use direct image URLs (from GitHub, Imgur, etc.)</li>
+                        <li><strong>Create Pull Request:</strong> Click the button to automatically:
+                            <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                                <li>Create a new branch</li>
+                                <li>Commit your post</li>
+                                <li>Open a Pull Request</li>
+                            </ul>
+                        </li>
+                        <li><strong>Review & Publish:</strong> Go to GitHub, review the PR, and merge it</li>
+                        <li><strong>Automatic Deployment:</strong> Your post goes live in 1-2 minutes!</li>
                     </ol>
                     
-                    <h3 style="margin-top: 2rem;">Data Storage:</h3>
-                    <p>Posts are stored in <code>data/posts.json</code>. Since GitHub Pages is static, you need to manually update this file after creating/editing posts.</p>
+                    <h3 style="margin-top: 2rem;">⚠️ Troubleshooting:</h3>
+                    <div style="background: #fef3c7; color: #92400e; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <strong>Error: "Resource not accessible by personal access token"</strong><br>
+                        <strong>Solution:</strong> Your token is missing permissions.<br><br>
+                        1. Go to <a href="https://github.com/settings/tokens" target="_blank" style="color: #92400e; text-decoration: underline;">GitHub Settings → Tokens</a><br>
+                        2. Delete the old token<br>
+                        3. Create a NEW <strong>classic</strong> token (not fine-grained)<br>
+                        4. Check these boxes: ✅ repo (full control) + ✅ workflow<br>
+                        5. Generate token and copy it<br>
+                        6. Click "Logout" button above<br>
+                        7. Paste your new token when prompted
+                    </div>
                     
                     <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
-                        <strong>Quick Workflow:</strong><br>
-                        1. Create/edit post → 2. Click "Save Post" → 3. Copy JSON content → 4. Paste into <code>data/posts.json</code> → 5. Commit to GitHub
+                        <strong>📖 Quick Workflow:</strong><br>
+                        1. Fill in post details → 2. Click "Create Pull Request" → 3. Review on GitHub → 4. Merge PR → 5. Post goes live automatically!
                     </div>
                 </div>
             </section>

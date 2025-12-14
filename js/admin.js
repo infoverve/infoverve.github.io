@@ -78,16 +78,28 @@ function showAuthPrompt() {
             
             <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
                 <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">
-                    How to get a token:
+                    📋 Step-by-step token creation:
                 </h3>
                 <ol style="color: var(--text-secondary); line-height: 2; padding-left: 1.5rem;">
                     <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color: var(--primary-color);">GitHub Settings → Personal Access Tokens</a></li>
-                    <li>Click "Generate new token (classic)"</li>
+                    <li><strong>Click "Generate new token (classic)"</strong> (not fine-grained)</li>
                     <li>Name it "Blog Admin"</li>
-                    <li>Select scopes: <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">repo</code> and <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">workflow</code></li>
-                    <li>Click "Generate token"</li>
-                    <li>Copy the token and paste below</li>
+                    <li>Set expiration (recommend: 90 days)</li>
+                    <li><strong>IMPORTANT:</strong> Select these scopes:
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                            <li>✅ <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">repo</code> (Full control of private repositories)</li>
+                            <li>✅ <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">workflow</code> (Update GitHub Action workflows)</li>
+                        </ul>
+                    </li>
+                    <li>Scroll down and click "Generate token"</li>
+                    <li>Copy the token (starts with ghp_) and paste below</li>
                 </ol>
+                <div style="background: #fef3c7; color: #92400e; padding: 1rem; border-radius: 6px; margin-top: 1rem; font-size: 0.875rem;">
+                    <strong>⚠️ Common Issues:</strong><br>
+                    • Using fine-grained token instead of classic<br>
+                    • Missing "repo" or "workflow" scope<br>
+                    • Token expired or revoked
+                </div>
             </div>
             
             <div style="margin-bottom: 1rem;">
@@ -467,7 +479,29 @@ Review and merge to publish this blog post.`
         
     } catch (error) {
         console.error('Error creating PR:', error);
-        showNotification(`Failed to create Pull Request: ${error.message}`, 'error');
+        
+        let errorMessage = error.message;
+        let helpText = '';
+        
+        if (errorMessage.includes('not accessible by personal access token') || 
+            errorMessage.includes('Resource not accessible')) {
+            helpText = '<br><br><strong>Solution:</strong> Your token is missing required permissions.<br>' +
+                      '1. Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Tokens</a><br>' +
+                      '2. Delete the old token<br>' +
+                      '3. Create a new <strong>classic</strong> token with:<br>' +
+                      '   • ✅ repo (full control)<br>' +
+                      '   • ✅ workflow<br>' +
+                      '4. Click Logout and re-authenticate';
+        } else if (errorMessage.includes('Reference already exists')) {
+            helpText = '<br><br><strong>Solution:</strong> A branch with this post ID exists.<br>' +
+                      '1. Merge or close the existing PR<br>' +
+                      '2. Or edit the post to change its ID';
+        } else if (errorMessage.includes('Not Found')) {
+            helpText = '<br><br><strong>Solution:</strong> Check repository name in js/admin.js<br>' +
+                      'Update REPO_OWNER and REPO_NAME constants';
+        }
+        
+        showNotification(`Failed to create Pull Request: ${errorMessage}${helpText}`, 'error');
     }
 }
 
@@ -562,13 +596,14 @@ function showNotification(message, type = 'info') {
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 10000;
-        max-width: 400px;
+        max-width: 500px;
         animation: slideIn 0.3s ease;
     `;
     notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
+        <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" style="margin-top: 2px;"></i>
+            <div style="flex: 1; line-height: 1.5;">${message}</div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; padding: 0; margin-left: 0.5rem;">×</button>
         </div>
     `;
     
@@ -577,7 +612,7 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
-    }, 5000);
+    }, type === 'error' ? 10000 : 5000);
 }
 
 // Add animations
