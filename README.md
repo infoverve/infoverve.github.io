@@ -103,10 +103,28 @@ Your blog will be live at `https://username.github.io`
 
 ## 📝 Creating Posts
 
-### Using the Admin Panel
+### Using the Admin Panel (Automated PR Workflow)
 
-1. Visit `https://username.github.io/admin.html`
-2. Fill in the post details:
+The admin panel is now a **private, authenticated system** that automatically creates Pull Requests for blog posts.
+
+#### First-Time Setup
+
+1. **Generate a GitHub Personal Access Token:**
+   - Go to [GitHub Settings → Personal Access Tokens](https://github.com/settings/tokens/new)
+   - Click "Generate new token (classic)"
+   - Name it "Blog Admin"
+   - Select scopes: `repo` and `workflow`
+   - Generate and copy the token
+
+2. **Access Admin Panel:**
+   - Visit `https://username.github.io/admin.html` (not linked publicly)
+   - Bookmark this URL for future access
+   - Enter your GitHub token when prompted
+   - Token is stored securely in your browser
+
+#### Creating a New Post
+
+1. Fill in the post details:
    - **Title** - Your post headline
    - **Author** - Your name
    - **Category** - Choose from predefined categories
@@ -116,15 +134,23 @@ Your blog will be live at `https://username.github.io`
    - **Tags** - Comma-separated keywords
    - **Content** - Full post in Markdown
 
-3. Click "Save Post" to download `posts.json`
-4. Replace `data/posts.json` in your repository
-5. Commit and push:
+2. Click **"Create Pull Request"**
+   - A new branch is automatically created
+   - Changes are committed to the branch
+   - A Pull Request is opened in your repository
 
-```bash
-git add data/posts.json
-git commit -m "Add new blog post"
-git push
-```
+3. **Review and Merge:**
+   - Go to your repository's Pull Requests tab
+   - Review the blog post changes
+   - Merge the PR when ready
+   - GitHub Actions automatically deploys to GitHub Pages
+
+**Benefits:**
+- ✅ No manual file editing required
+- ✅ Full review process before publishing
+- ✅ Automatic deployment after approval
+- ✅ Complete change history
+- ✅ Collaboration-friendly workflow
 
 ### Markdown Writing Tips
 
@@ -194,6 +220,31 @@ Update filter tabs in `index.html`:
 <button class="filter-tab" data-filter="yourcategory">Your Category</button>
 ```
 
+## � Admin Panel Security
+
+The admin panel (`admin.html`) is **not linked** from public pages and requires:
+
+- Direct URL access (bookmark it)
+- GitHub Personal Access Token authentication
+- Repository write permissions
+
+**Security Best Practices:**
+
+1. Never commit your token to the repository
+2. Use tokens with minimal required scopes (`repo`, `workflow`)
+3. Rotate tokens periodically
+4. Revoke tokens if compromised
+5. Consider IP restrictions on your GitHub account
+
+**Access Control:**
+
+Only users with:
+- Repository write access
+- Valid GitHub token
+- Direct URL knowledge
+
+...can create or edit blog posts.
+
 ## 🔧 Advanced Features
 
 ### Using External Markdown Files
@@ -202,6 +253,7 @@ Instead of storing content in JSON, you can use separate markdown files:
 
 1. Create a file in `posts/` directory (e.g., `my-post.md`)
 2. In your post JSON, use:
+
 ```json
 {
     "contentFile": "my-post.md"

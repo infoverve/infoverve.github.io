@@ -1,10 +1,16 @@
 // Admin Panel Functionality
 const DATA_FILE = 'data/posts.json';
+const GITHUB_API = 'https://api.github.com';
+const REPO_OWNER = 'infoverve';
+const REPO_NAME = 'infoverve.github.io';
+
 let allPosts = [];
 let editingPostId = null;
+let githubToken = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initTheme();
+    checkAuthentication();
     loadExistingPosts();
     setupForm();
     setDefaultDate();
@@ -33,6 +39,148 @@ function updateThemeIcon(theme) {
 }
 
 document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+
+// Authentication
+function checkAuthentication() {
+    githubToken = localStorage.getItem('github_token');
+    
+    if (!githubToken) {
+        showAuthPrompt();
+    } else {
+        verifyToken();
+    }
+}
+
+function showAuthPrompt() {
+    const authOverlay = document.createElement('div');
+    authOverlay.id = 'authOverlay';
+    authOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+    
+    authOverlay.innerHTML = `
+        <div style="background: var(--bg-primary); padding: 3rem; border-radius: 16px; max-width: 500px; width: 90%;">
+            <h2 style="margin-bottom: 1rem; color: var(--text-primary);">
+                <i class="fas fa-lock"></i> GitHub Authentication Required
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+                To create and manage blog posts via Pull Requests, you need to authenticate with GitHub.
+            </p>
+            
+            <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">
+                    How to get a token:
+                </h3>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 1.5rem;">
+                    <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color: var(--primary-color);">GitHub Settings → Personal Access Tokens</a></li>
+                    <li>Click "Generate new token (classic)"</li>
+                    <li>Name it "Blog Admin"</li>
+                    <li>Select scopes: <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">repo</code> and <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">workflow</code></li>
+                    <li>Click "Generate token"</li>
+                    <li>Copy the token and paste below</li>
+                </ol>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">
+                    GitHub Personal Access Token:
+                </label>
+                <input type="password" id="tokenInput" 
+                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-family: monospace; background: var(--bg-primary); color: var(--text-primary);"
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="saveToken()" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-save"></i> Save Token
+                </button>
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 1rem; text-align: center;">
+                <i class="fas fa-shield-alt"></i> Token is stored locally in your browser
+            </p>
+        </div>
+    `;
+    
+    document.body.appendChild(authOverlay);
+    document.getElementById('tokenInput').focus();
+    
+    // Allow Enter key to submit
+    document.getElementById('tokenInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') saveToken();
+    });
+}
+
+async function saveToken() {
+    const token = document.getElementById('tokenInput').value.trim();
+    
+    if (!token) {
+        showNotification('Please enter a valid token', 'error');
+        return;
+    }
+    
+    // Verify token
+    try {
+        const response = await fetch(`${GITHUB_API}/user`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            localStorage.setItem('github_token', token);
+            localStorage.setItem('github_user', user.login);
+            githubToken = token;
+            
+            document.getElementById('authOverlay')?.remove();
+            showNotification(`Authenticated as ${user.login}`, 'success');
+        } else {
+            showNotification('Invalid token. Please check and try again.', 'error');
+        }
+    } catch (error) {
+        showNotification('Failed to verify token. Check your internet connection.', 'error');
+    }
+}
+
+async function verifyToken() {
+    try {
+        const response = await fetch(`${GITHUB_API}/user`, {
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        
+        if (!response.ok) {
+            localStorage.removeItem('github_token');
+            localStorage.removeItem('github_user');
+            showAuthPrompt();
+        }
+    } catch (error) {
+        console.error('Token verification failed:', error);
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('github_token');
+        localStorage.removeItem('github_user');
+        githubToken = null;
+        showNotification('Logged out successfully', 'info');
+        setTimeout(() => location.reload(), 1000);
+    }
+}
 
 // Set default date
 function setDefaultDate() {
@@ -95,7 +243,13 @@ function setupForm() {
 }
 
 // Save post
-function savePost() {
+async function savePost() {
+    if (!githubToken) {
+        showNotification('Please authenticate with GitHub first', 'error');
+        showAuthPrompt();
+        return;
+    }
+    
     const form = document.getElementById('postForm');
     const formData = {
         id: editingPostId || generateId(),
@@ -117,7 +271,7 @@ function savePost() {
         return;
     }
     
-    // Add or update post
+    // Add or update post in local array
     if (editingPostId) {
         const index = allPosts.findIndex(p => p.id === editingPostId);
         if (index !== -1) {
@@ -128,11 +282,8 @@ function savePost() {
         allPosts.unshift(formData);
     }
     
-    // Save to file
-    downloadPostsData();
-    displayPostsList();
-    clearForm();
-    showNotification('Post saved! Download the JSON file and update data/posts.json', 'success');
+    // Create Pull Request
+    await createPullRequest(formData);
 }
 
 // Edit post
@@ -209,7 +360,158 @@ function previewPost() {
     `);
 }
 
-// Download posts data as JSON
+// Create Pull Request
+async function createPullRequest(postData) {
+    try {
+        showNotification('Creating Pull Request...', 'info');
+        
+        // 1. Get the default branch SHA
+        const mainRef = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/main`, {
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        }).then(r => r.json());
+        
+        const baseSha = mainRef.object.sha;
+        
+        // 2. Create a new branch
+        const branchName = `blog-post-${postData.id}`;
+        await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/refs`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ref: `refs/heads/${branchName}`,
+                sha: baseSha
+            })
+        });
+        
+        // 3. Get current posts.json
+        const currentFile = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/posts.json?ref=main`, {
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        }).then(r => r.json());
+        
+        // 4. Update posts data
+        const updatedData = {
+            posts: allPosts,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(updatedData, null, 2))));
+        
+        // 5. Commit the change
+        await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/posts.json`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: `${editingPostId ? 'Update' : 'Add'} blog post: ${postData.title}`,
+                content: content,
+                sha: currentFile.sha,
+                branch: branchName
+            })
+        });
+        
+        // 6. Create Pull Request
+        const prResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/pulls`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: `${editingPostId ? 'Update' : 'Add'} Blog Post: ${postData.title}`,
+                head: branchName,
+                base: 'main',
+                body: `## Blog Post Details
+
+**Title:** ${postData.title}
+**Author:** ${postData.author}
+**Category:** ${postData.category}
+**Date:** ${postData.date}
+**Featured:** ${postData.featured ? 'Yes' : 'No'}
+
+### Excerpt
+${postData.excerpt}
+
+### Tags
+${postData.tags.join(', ')}
+
+---
+
+This Pull Request was automatically generated by the InfoVerve Admin Panel.
+Review and merge to publish this blog post.`
+            })
+        });
+        
+        const pr = await prResponse.json();
+        
+        if (prResponse.ok) {
+            displayPostsList();
+            clearForm();
+            showPRSuccess(pr.html_url, pr.number);
+        } else {
+            throw new Error(pr.message || 'Failed to create PR');
+        }
+        
+    } catch (error) {
+        console.error('Error creating PR:', error);
+        showNotification(`Failed to create Pull Request: ${error.message}`, 'error');
+    }
+}
+
+function showPRSuccess(prUrl, prNumber) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: var(--bg-primary); padding: 3rem; border-radius: 16px; max-width: 600px; width: 90%; text-align: center;">
+            <div style="font-size: 4rem; color: #10b981; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Pull Request Created!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+                Your blog post has been submitted as Pull Request #${prNumber}.<br>
+                Once approved and merged, it will be automatically published to your blog.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="${prUrl}" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                    <i class="fab fa-github"></i> View Pull Request
+                </a>
+                <button onclick="this.closest('div').parentElement.parentElement.remove()" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Download posts data as JSON (backup method)
 function downloadPostsData() {
     const data = {
         posts: allPosts,
